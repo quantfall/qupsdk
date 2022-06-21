@@ -1,1 +1,1 @@
-# QUp SDK
+# Updates Client SDK
