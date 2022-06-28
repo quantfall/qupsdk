@@ -1,4 +1,4 @@
-package qup-sdk
+package qupsdk
 
 import (
 	"io/ioutil"
