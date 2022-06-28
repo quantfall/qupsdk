@@ -1,3 +1,3 @@
-module github.com/quantfall/UpdatesClientSDK
+module github.com/quantfall/qup-sdk
 
 go 1.18
