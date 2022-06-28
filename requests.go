@@ -43,7 +43,7 @@ func GetNextUpdate(project, last string) (UpdateResponse, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 200 {
-		return UpdateResponse{}, fmt.Errorf("there is no next update")
+		return UpdateResponse{}, fmt.Errorf("no next update")
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
