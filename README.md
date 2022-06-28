@@ -1,1 +1,1 @@
-# qup-sdk
+# qupsdk
