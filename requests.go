@@ -1,10 +1,14 @@
 package updatesclientsdk
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
 )
 
 type UpdateResponse struct {
@@ -53,4 +57,57 @@ func GetNextUpdate(project, last string) (UpdateResponse, error) {
 	}
 
 	return update, nil
+}
+
+func DownloadFiles(project string, update UpdateResponse) error {
+	for _, file := range(update.Files){
+		for i := 0; i < 2; i++ {
+			err := downloadFile(project, file.Name, update.Version)
+			if err != nil {
+				return err
+			}
+	
+			f, err := ioutil.ReadFile(filepath.Join(fmt.Sprint(update.Version), file.Name))
+			
+			hash := md5.Sum(f)
+			
+			if hex.EncodeToString(hash[:]) != file.Sum {
+				return fmt.Errorf("file corrupted")
+			}
+		}
+	}
+
+	return nil
+}
+
+func downloadFile(project, file string, version uint) error {
+	req, err := http.NewRequest("GET", fmt.Sprint("https://updates.quantfall.com/qup/v1/public/file/", project, "/", version, "/", file), nil)
+	if err != nil {
+		return err
+	}
+
+	client := &http.Client{}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	err = os.MkdirAll(fmt.Sprint(version), 0755)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(filepath.Join(fmt.Sprint(version), file), body, 0755)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

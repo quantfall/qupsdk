@@ -28,7 +28,7 @@ func GetLastUpdate(file string) (string, error) {
 	return string(f), nil
 }
 
-func SetLastUpdate(file string, last string) error {
+func SetLastUpdate(file, last string) error {
 	ioutil.WriteFile(file, []byte(last), 0755)
 	return nil
 }
