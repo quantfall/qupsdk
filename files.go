@@ -1,4 +1,4 @@
-package updatesclientsdk
+package qup-sdk
 
 import (
 	"io/ioutil"
